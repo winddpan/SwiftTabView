@@ -1,19 +1,39 @@
 import SwiftUI
 
-public struct SwiftTabView<SelectionValue, Content>: View where SelectionValue: Hashable, Content: View {
+public struct SwiftTabView<SelectionValue: Hashable, Content: View>: View {
+    private let builderManager = BuilderManager()
     private let selection: Binding<SelectionValue>?
     private let content: () -> Content
+    private let postContent: ((any View) -> any View)?
 
     public init(selection: Binding<SelectionValue>?,
-                @ViewBuilder content: @escaping () -> Content) {
+                @ViewBuilder content: @escaping () -> Content,
+                postContent: ((some View) -> any View)? = nil) {
         self.selection = selection
         self.content = content
+        self.postContent = postContent
     }
 
     public var body: some View {
-        _VariadicView.Tree(TabLayout(selection: selection), content: content)
+        let view = _VariadicView.Tree(TabLayout(selection: selection), content: content)
+        if let postContent {
+            postContent(view)
+//                .environment(\.builderManager, builderManager)
+        } else {
+            view
+                .environment(\.builderManager, builderManager)
+        }
     }
 }
+
+// public extension SwiftTabView where PostContentOut == Content {
+//    init(selection: Binding<SelectionValue>?,
+//         @ViewBuilder content: @escaping () -> Content) {
+//        self.selection = selection
+//        self.content = content
+//        postContent = { $0 }
+//    }
+// }
 
 private struct TabLayout<SelectionValue>: _VariadicView_MultiViewRoot where SelectionValue: Hashable {
     let selection: Binding<SelectionValue>?

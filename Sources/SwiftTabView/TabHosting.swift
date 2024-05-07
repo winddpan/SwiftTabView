@@ -7,7 +7,7 @@ struct TabHosting: UIViewControllerRepresentable {
     let children: _VariadicView.Children
 
     func makeUIViewController(context: Context) -> TabHostingViewController {
-        return TabHostingViewController()
+        TabHostingViewController()
     }
 
     func updateUIViewController(_ uiViewController: TabHostingViewController, context: Context) {
@@ -27,7 +27,7 @@ class TabHostingViewController: UIViewController {
 
     var childrenViews: _VariadicView.Children? {
         didSet {
-            if childrenViews?.map({ $0.id }) != oldValue?.map({ $0.id }) {
+            if childrenViews?.map(\.id) != oldValue?.map(\.id) {
                 rebuild()
             }
         }
@@ -44,9 +44,9 @@ class TabHostingViewController: UIViewController {
             .eraseToAnyPublisher()
             .sink { [weak self] selection in
                 guard let self else { return }
-                let child = self.childrenViews?.first(where: { $0.id == selection }) ?? self.childrenViews?.first
+                let child = childrenViews?.first(where: { $0.id == selection }) ?? childrenViews?.first
                 if let selection, let child {
-                    self.loadChild(child)
+                    loadChild(child)
                     if selection != self.selection?.wrappedValue {
                         self.selection?.wrappedValue = selection
                     }
