@@ -3,16 +3,16 @@ import SwiftUI
 import UIKit
 
 struct TabHosting: UIViewControllerRepresentable {
-    let selection: Binding<AnyHashable>?
+    let selection: Binding<AnyHashable>
     let children: _VariadicView.Children
 
     func makeUIViewController(context: Context) -> TabHostingViewController {
-        TabHostingViewController()
+        TabHostingViewController(selection: selection)
     }
 
     func updateUIViewController(_ uiViewController: TabHostingViewController, context: Context) {
-        if let selection = selection?.wrappedValue {
-            uiViewController.selectionSubject.value = selection
+        if selection.wrappedValue != uiViewController.selectionSubject.value {
+            uiViewController.selectionSubject.value = selection.wrappedValue
         }
         uiViewController.childrenViews = children
     }
@@ -20,7 +20,7 @@ struct TabHosting: UIViewControllerRepresentable {
 
 class TabHostingViewController: UIViewController {
     var cancellable = Set<AnyCancellable>()
-    let selection: Binding<AnyHashable>? = nil
+    let selection: Binding<AnyHashable>
     var loadChilds: [AnyHashable: UIViewController] = [:]
 
     let selectionSubject = CurrentValueSubject<AnyHashable?, Never>(nil)
@@ -33,8 +33,14 @@ class TabHostingViewController: UIViewController {
         }
     }
 
-    deinit {
-        print("TabHostingViewController")
+    init(selection: Binding<AnyHashable>) {
+        self.selection = selection
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -45,10 +51,12 @@ class TabHostingViewController: UIViewController {
             .sink { [weak self] selection in
                 guard let self else { return }
                 let child = childrenViews?.first(where: { $0.id == selection }) ?? childrenViews?.first
-                if let selection, let child {
+                if let child {
                     loadChild(child)
-                    if selection != self.selection?.wrappedValue {
-                        self.selection?.wrappedValue = selection
+                    if child.id != self.selection.wrappedValue {
+                        DispatchQueue.main.async {
+                            self.selection.wrappedValue = child.id
+                        }
                     }
                 }
             }

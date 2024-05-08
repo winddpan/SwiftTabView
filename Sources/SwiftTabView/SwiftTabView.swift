@@ -1,56 +1,62 @@
 import SwiftUI
 
+private(set) var refBuilderManager: BuilderManager?
+
 public struct SwiftTabView<SelectionValue: Hashable, Content: View>: View {
-    private let builderManager = BuilderManager()
+    @ObservedObject var selectionObservable: SelectionObservable
+    @Binding private var context: SwiftTabContext
     private let selection: Binding<SelectionValue>?
     private let content: () -> Content
-    private let postContent: ((any View) -> any View)?
 
     public init(selection: Binding<SelectionValue>?,
-                @ViewBuilder content: @escaping () -> Content,
-                postContent: ((some View) -> any View)? = nil) {
+                context: Binding<SwiftTabContext>,
+                @ViewBuilder content: @escaping () -> Content) {
         self.selection = selection
+        _context = context
         self.content = content
-        self.postContent = postContent
+        _selectionObservable = .init(initialValue: context.wrappedValue.selectionObservable)
     }
 
     public var body: some View {
-        let view = _VariadicView.Tree(TabLayout(selection: selection), content: content)
-        if let postContent {
-            postContent(view)
-//                .environment(\.builderManager, builderManager)
-        } else {
-            view
-                .environment(\.builderManager, builderManager)
-        }
+        let _ = {
+            refBuilderManager = BuilderManager()
+        }()
+
+        let toBindBuilderManager = refBuilderManager
+
+        _VariadicView.Tree(TabLayout(selection: $selectionObservable.selection), content: content)
+            .onAppear {
+                context.builderManager = toBindBuilderManager
+                if let selection, selectionObservable.selection != AnyHashable(selection.wrappedValue) {
+                    selectionObservable.selection = AnyHashable(selection.wrappedValue)
+                }
+            }
+            .onChange(of: selection?.wrappedValue) { newValue in
+                if let newValue {
+                    selectionObservable.selection = newValue
+                }
+            }
+
+        let _ = {
+            refBuilderManager = nil
+        }()
     }
 }
 
-// public extension SwiftTabView where PostContentOut == Content {
-//    init(selection: Binding<SelectionValue>?,
-//         @ViewBuilder content: @escaping () -> Content) {
-//        self.selection = selection
-//        self.content = content
-//        postContent = { $0 }
-//    }
-// }
+public extension SwiftTabView where SelectionValue == AnyHashable {
+    init(context: Binding<SwiftTabContext>,
+         @ViewBuilder content: @escaping () -> Content) {
+        self.init(selection: nil, context: context, content: content)
+    }
+}
 
-private struct TabLayout<SelectionValue>: _VariadicView_MultiViewRoot where SelectionValue: Hashable {
-    let selection: Binding<SelectionValue>?
+private struct TabLayout: _VariadicView_MultiViewRoot {
+    let selection: Binding<AnyHashable>
 
     @ViewBuilder
     func body(children: _VariadicView.Children) -> some View {
-        let binding = Binding<AnyHashable>.init(get: {
-            if let value = selection?.wrappedValue as? AnyHashable {
-                return value
-            }
-            return children.first!.id
-        }, set: {
-            if let value = $0 as? SelectionValue {
-                selection?.wrappedValue = value
-            }
-        })
-
-        TabHosting(selection: binding, children: children)
+        TabHosting(selection: selection, children: children)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea()
     }
 }

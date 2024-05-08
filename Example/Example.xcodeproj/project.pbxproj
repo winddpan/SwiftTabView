@@ -8,18 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		083D283B26EB4367007F8895 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083D283A26EB4367007F8895 /* ExampleApp.swift */; };
-		083D283D26EB4367007F8895 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083D283C26EB4367007F8895 /* ContentView.swift */; };
+		083D283D26EB4367007F8895 /* SystemStyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 083D283C26EB4367007F8895 /* SystemStyleView.swift */; };
 		083D283F26EB4368007F8895 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 083D283E26EB4368007F8895 /* Assets.xcassets */; };
 		F705F1ED2BEA1D1D00E63C6E /* SwiftTabView in Frameworks */ = {isa = PBXBuildFile; productRef = F705F1EC2BEA1D1D00E63C6E /* SwiftTabView */; };
+		F7A7044B2BEB6CD300811FDF /* HideBottomWhenPushedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7044A2BEB6CD300811FDF /* HideBottomWhenPushedView.swift */; };
+		F7A7044D2BEB6F7100811FDF /* TestViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7044C2BEB6F7100811FDF /* TestViews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		083D283726EB4367007F8895 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		083D283A26EB4367007F8895 /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
-		083D283C26EB4367007F8895 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		083D283C26EB4367007F8895 /* SystemStyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemStyleView.swift; sourceTree = "<group>"; };
 		083D283E26EB4368007F8895 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		083D284326EB4368007F8895 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F705F1EB2BEA1C9F00E63C6E /* SwiftTabView */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SwiftTabView; path = ..; sourceTree = "<group>"; };
+		F7A7044A2BEB6CD300811FDF /* HideBottomWhenPushedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideBottomWhenPushedView.swift; sourceTree = "<group>"; };
+		F7A7044C2BEB6F7100811FDF /* TestViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViews.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,8 +58,10 @@
 		083D283926EB4367007F8895 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				F7A7044C2BEB6F7100811FDF /* TestViews.swift */,
 				083D283A26EB4367007F8895 /* ExampleApp.swift */,
-				083D283C26EB4367007F8895 /* ContentView.swift */,
+				083D283C26EB4367007F8895 /* SystemStyleView.swift */,
+				F7A7044A2BEB6CD300811FDF /* HideBottomWhenPushedView.swift */,
 				083D283E26EB4368007F8895 /* Assets.xcassets */,
 				083D284326EB4368007F8895 /* Info.plist */,
 			);
@@ -141,8 +147,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				083D283D26EB4367007F8895 /* ContentView.swift in Sources */,
+				F7A7044D2BEB6F7100811FDF /* TestViews.swift in Sources */,
+				083D283D26EB4367007F8895 /* SystemStyleView.swift in Sources */,
 				083D283B26EB4367007F8895 /* ExampleApp.swift in Sources */,
+				F7A7044B2BEB6CD300811FDF /* HideBottomWhenPushedView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,9 +278,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = H72YUS24CN;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -280,8 +288,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = tsatualdypov.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SwiftTabView.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -292,9 +301,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = H72YUS24CN;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Example/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -302,8 +311,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = tsatualdypov.Example;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SwiftTabView.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
