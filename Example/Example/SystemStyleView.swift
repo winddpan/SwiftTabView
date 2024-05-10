@@ -47,6 +47,9 @@ struct SystemStyleView: View {
         .safeAreaInset(edge: .bottom) {
             SwiftTabBar(style: DefaultSwiftTabBarStyle(), context: $tabContext)
         }
+        .onChange(of: selection) { newValue in
+            print("onChange selection", newValue)
+        }
     }
 }
 

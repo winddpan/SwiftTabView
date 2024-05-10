@@ -28,12 +28,17 @@ public struct SwiftTabView<SelectionValue: Hashable, Content: View>: View {
             .onAppear {
                 context.builderManager = toBindBuilderManager
                 if let selection, selectionObservable.selection != AnyHashable(selection.wrappedValue) {
-                    selectionObservable.selection = AnyHashable(selection.wrappedValue)
+                    selectionObservable.selection = selection.wrappedValue
                 }
             }
             .onChange(of: selection?.wrappedValue) { newValue in
                 if let newValue {
                     selectionObservable.selection = newValue
+                }
+            }
+            .onChange(of: selectionObservable.selection) { newValue in
+                if let newValue = newValue as? SelectionValue, selection?.wrappedValue != newValue {
+                    selection?.wrappedValue = newValue
                 }
             }
 
