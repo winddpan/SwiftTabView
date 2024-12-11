@@ -53,11 +53,6 @@ class TabHostingViewController: UIViewController {
                 let child = childrenViews?.first(where: { $0.id == selection }) ?? childrenViews?.first
                 if let child {
                     loadChild(child)
-                    if child.id != self.selection.wrappedValue {
-                        DispatchQueue.main.async {
-                            self.selection.wrappedValue = child.id
-                        }
-                    }
                 }
             }
             .store(in: &cancellable)
