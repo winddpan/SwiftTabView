@@ -32,11 +32,11 @@ public struct SwiftTabView<SelectionValue: Hashable, Content: View>: View {
                 }
             }
             .onChange(of: selection?.wrappedValue) { newValue in
-                if let newValue {
+                if let newValue, selectionObservable.selection != AnyHashable(newValue) {
                     selectionObservable.selection = newValue
                 }
             }
-            .onChange(of: selectionObservable.selection) { newValue in
+            .onReceive(selectionObservable.$selection) { newValue in
                 if let newValue = newValue as? SelectionValue, selection?.wrappedValue != newValue {
                     selection?.wrappedValue = newValue
                 }
