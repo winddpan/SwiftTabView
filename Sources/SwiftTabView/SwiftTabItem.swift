@@ -1,14 +1,17 @@
 import SwiftUI
 
-public extension View {
-    func swiftTabItem(tag: some Hashable, @ViewBuilder _ label: @escaping (_ isSelected: Bool) -> some View) -> some View {
+extension View {
+    public func swiftTabItem(tag: some Hashable, @ViewBuilder _ label: @escaping (_ isSelected: Bool) -> some View) -> some View {
         if let manager = refBuilderManager {
-            let builder = { isSelected in
+            let tabBuilder = { isSelected in
                 AnyView(label(isSelected))
             }
-            manager.builders.append(TagItemBuilder(tag: tag, itemBuilder: builder))
+            let contentBuilder = {
+                AnyView(self)
+            }
+            manager.builders.append(TagItemBuilder(tag: tag, tabBuilder: tabBuilder, contentBuilder: contentBuilder))
         }
 
-        return id(tag)
+        return EmptyView()
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 import SwiftUI
 
 class SelectionObservable: ObservableObject {
-    @Published var selection: AnyHashable = .init(0)
+    @Published var selection: AnyHashable = .init(Int.min)
 }
 
 public struct SwiftTabContext {

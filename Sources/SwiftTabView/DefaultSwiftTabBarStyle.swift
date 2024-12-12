@@ -7,7 +7,7 @@ public struct DefaultSwiftTabBarStyle: SwiftTabBarStyle {
         HStack {
             Spacer()
             ForEach(tabItemsBuilders, id: \.tag) { item in
-                item.itemBuilder(selection.wrappedValue == item.tag)
+                item.tabBuilder(selection.wrappedValue == item.tag)
                     .onTapGesture {
                         selection.wrappedValue = item.tag
                     }

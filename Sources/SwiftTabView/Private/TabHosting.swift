@@ -4,80 +4,55 @@ import UIKit
 
 struct TabHosting: UIViewControllerRepresentable {
     let selection: Binding<AnyHashable>
-    let children: _VariadicView.Children
+    let builderManager: BuilderManager
 
     func makeUIViewController(context: Context) -> TabHostingViewController {
-        TabHostingViewController(selection: selection)
+        TabHostingViewController()
     }
 
     func updateUIViewController(_ uiViewController: TabHostingViewController, context: Context) {
-        if selection.wrappedValue != uiViewController.selectionSubject.value {
-            uiViewController.selectionSubject.value = selection.wrappedValue
-        }
-        uiViewController.childrenViews = children
+        uiViewController.builders = builderManager.builders
+        uiViewController.selected = selection.wrappedValue
     }
 }
 
 class TabHostingViewController: UIViewController {
-    var cancellable = Set<AnyCancellable>()
-    let selection: Binding<AnyHashable>
-    var loadChilds: [AnyHashable: UIViewController] = [:]
+    private var loadChilds: [AnyHashable: UIHostingController<AnyView>] = [:]
 
-    let selectionSubject = CurrentValueSubject<AnyHashable?, Never>(nil)
-
-    var childrenViews: _VariadicView.Children? {
+    var builders: [TagItemBuilder] = [] {
         didSet {
-            if childrenViews?.map(\.id) != oldValue?.map(\.id) {
+            if builders.map(\.tag) != oldValue.map(\.tag) {
                 rebuild()
             }
         }
     }
 
-    init(selection: Binding<AnyHashable>) {
-        self.selection = selection
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        selectionSubject
-            .eraseToAnyPublisher()
-            .sink { [weak self] selection in
-                guard let self else { return }
-                let child = childrenViews?.first(where: { $0.id == selection }) ?? childrenViews?.first
-                if let child {
-                    loadChild(child)
-                }
+    var selected: AnyHashable? {
+        didSet {
+            if oldValue != selected, let selected {
+                loadChild(selected)
             }
-            .store(in: &cancellable)
-
-        rebuild()
+        }
     }
 
-    func rebuild() {
+    private func rebuild() {
         children.forEach {
             $0.viewIfLoaded?.removeFromSuperview()
             $0.removeFromParent()
         }
         loadChilds.removeAll()
-
-        let value = selectionSubject.value
-        selectionSubject.value = value
     }
 
-    func loadChild(_ child: _VariadicView.Children.Element) {
-        let selection = child.id
-        let firstAdd = loadChilds[selection] == nil
-        let viewController = loadChilds[selection] ?? UIHostingController(rootView: child)
+    func loadChild(_ selected: AnyHashable) {
+        guard let contentBuilder = builders.first(where: { $0.tag == selected })?.contentBuilder else {
+            return
+        }
+
+        let firstAdd = loadChilds[selected] == nil
+        let viewController = loadChilds[selected] ?? UIHostingController(rootView: contentBuilder())
 
         loadChilds.forEach { key, vc in
-            if key != selection {
+            if key != selected {
                 vc.view.removeFromSuperview()
                 vc.removeFromParent()
             }
@@ -98,6 +73,6 @@ class TabHostingViewController: UIViewController {
             viewController.didMove(toParent: self)
         }
 
-        loadChilds[selection] = viewController
+        loadChilds[selected] = viewController
     }
 }
